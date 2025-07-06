@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#ec4899" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Sweet Tracker" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Track candy stores and ice cream shops like Waze for sweet treats. Find the best sweet spots near you!" />
+    <meta name="keywords" content="candy, ice cream, tracker, map, sweet, treats, locations" />
+    <meta name="author" content="Sweet Tracker Team" />
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Sweet Tracker - Find Candy & Ice Cream" />
+    <meta property="og:description" content="Track candy stores and ice cream shops like Waze for sweet treats" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/icons/icon-512x512.png" />
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Sweet Tracker" />
+    <meta name="twitter:description" content="Find the best candy and ice cream spots near you" />
+    <meta name="twitter:image" content="/icons/icon-512x512.png" />
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192x192.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png" />
+    <link rel="apple-touch-icon" sizes="144x144" href="/icons/icon-144x144.png" />
+    <link rel="apple-touch-icon" sizes="120x120" href="/icons/icon-128x128.png" />
+    <link rel="apple-touch-icon" sizes="114x114" href="/icons/icon-128x128.png" />
+    <link rel="apple-touch-icon" sizes="76x76" href="/icons/icon-72x72.png" />
+    <link rel="apple-touch-icon" sizes="72x72" href="/icons/icon-72x72.png" />
+    <link rel="apple-touch-icon" sizes="60x60" href="/icons/icon-72x72.png" />
+    <link rel="apple-touch-icon" sizes="57x57" href="/icons/icon-72x72.png" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-72x72.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-72x72.png" />
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="/src/index.css" as="style" />
+    
+    <title>Sweet Tracker - Find Candy & Ice Cream</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- PWA Installation Script -->
+    <script>
+      // Register service worker
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+              console.log('SW registered: ', registration);
+            })
+            .catch((registrationError) => {
+              console.log('SW registration failed: ', registrationError);
+            });
+        });
+      }
+
+      // PWA Install prompt
+      let deferredPrompt;
+      
+      window.addEventListener('beforeinstallprompt', (e) => {
+        // Prevent Chrome 67 and earlier from automatically showing the prompt
+        e.preventDefault();
+        // Stash the event so it can be triggered later
+        deferredPrompt = e;
+        
+        // Show install button
+        showInstallButton();
+      });
+
+      function showInstallButton() {
+        // Create install button if it doesn't exist
+        if (!document.getElementById('install-button')) {
+          const installButton = document.createElement('button');
+          installButton.id = 'install-button';
+          installButton.innerHTML = '📱 Install App';
+          installButton.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, #ec4899, #06b6d4);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            cursor: pointer;
+            z-index: 1000;
+            font-size: 14px;
+            transition: all 0.3s ease;
+          `;
+          
+          installButton.addEventListener('click', installApp);
+          installButton.addEventListener('mouseenter', () => {
+            installButton.style.transform = 'scale(1.05)';
+          });
+          installButton.addEventListener('mouseleave', () => {
+            installButton.style.transform = 'scale(1)';
+          });
+          
+          document.body.appendChild(installButton);
+          
+          // Auto-hide after 10 seconds
+          setTimeout(() => {
+            if (installButton.parentNode) {
+              installButton.style.opacity = '0.7';
+            }
+          }, 10000);
+        }
+      }
+
+      function installApp() {
+        const installButton = document.getElementById('install-button');
+        
+        if (deferredPrompt) {
+          // Show the prompt
+          deferredPrompt.prompt();
+          
+          // Wait for the user to respond to the prompt
+          deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+              console.log('User accepted the install prompt');
+              if (installButton) {
+                installButton.remove();
+              }
+            } else {
+              console.log('User dismissed the install prompt');
+            }
+            deferredPrompt = null;
+          });
+        } else {
+          // Fallback for browsers that don't support install prompt
+          alert('To install this app:\n\n📱 On iPhone: Tap Share → Add to Home Screen\n🤖 On Android: Tap Menu → Add to Home Screen');
+        }
+      }
+
+      // Handle successful installation
+      window.addEventListener('appinstalled', (evt) => {
+        console.log('Sweet Tracker was installed successfully');
+        const installButton = document.getElementById('install-button');
+        if (installButton) {
+          installButton.remove();
+        }
+        
+        // Track installation
+        if ('gtag' in window) {
+          gtag('event', 'app_installed', {
+            'event_category': 'PWA',
+            'event_label': 'Sweet Tracker'
+          });
+        }
+      });
+
+      // Check if app is running in standalone mode
+      if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone) {
+        console.log('Running in standalone mode');
+        document.body.classList.add('standalone-mode');
+      }
+    </script>
+  </body>
+</html>

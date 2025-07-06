@@ -1,0 +1,38 @@
+{
+  "name": "sweet-tracker-installer",
+  "version": "1.0.0",
+  "description": "Self-installer for Sweet Tracker - A mobile-first candy and ice cream tracking app",
+  "main": "install.js",
+  "bin": {
+    "sweet-tracker": "./install.js"
+  },
+  "scripts": {
+    "install-app": "node install.js",
+    "start": "node install.js"
+  },
+  "keywords": [
+    "sweet-tracker",
+    "candy",
+    "ice-cream",
+    "mobile-app",
+    "installer",
+    "react",
+    "vite",
+    "tailwind"
+  ],
+  "author": "Sweet Tracker Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/sweet-tracker-installer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/sweet-tracker-installer/issues"
+  },
+  "homepage": "https://github.com/your-username/sweet-tracker-installer#readme"
+}
